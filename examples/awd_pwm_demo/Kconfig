@@ -1,0 +1,62 @@
+config EXAMPLES_AWD_PWM_DEMO
+    bool "AWD→PWM hardware-latch demo"
+    default n
+    depends on PWM && ADC && NUCLEO_H563ZI_AWD_PWM_LATCH
+    help
+      Demo that uses board APIs to arm/re-arm a hardware-only latch: PWM2 with
+      CEN=0 and slave RESET on ETRF. No changes to the PWM driver required.
+
+if EXAMPLES_AWD_PWM_DEMO
+
+config EXAMPLES_AWD_PWM_DEMO_TIM
+    int "TIM instance (1 or 8)"
+    default 1
+
+config EXAMPLES_AWD_PWM_DEMO_CH
+    int "TIM channel (1..4)"
+    range 1 4
+    default 1
+
+config EXAMPLES_AWD_PWM_DEMO_AWD
+    int "ADC AWD index (1..3)"
+    range 1 3
+    default 1
+
+config EXAMPLES_AWD_PWM_DEMO_ETF
+    int "ETR digital filter (0..15)"
+    range 0 15
+    default 0
+
+config EXAMPLES_AWD_PWM_DEMO_ETP
+    bool "Invert ETR polarity"
+
+config EXAMPLES_AWD_PWM_DEMO_ARR
+    hex "ARR value"
+    default 0x0000ffff
+
+config EXAMPLES_AWD_PWM_DEMO_CCR
+    int "CCR value (>0 for PWM2)"
+    range 1 65535
+    default 1
+
+config EXAMPLES_AWD_PWM_DEMO_ADCDEVPATH
+    string "ADC device path"
+    default "/dev/adc0"
+
+config EXAMPLES_AWD_PWM_DEMO_ADC_START
+    bool "Start ADC (ANIOC_TRIGGER) from demo"
+    default y
+    help
+      If enabled, the demo opens the ADC device and issues ANIOC_TRIGGER to
+      start conversions (useful when ADC is configured for DMA+continuous).
+
+config EXAMPLES_AWD_PWM_DEMO_ADC_DRAIN
+    bool "Drain ADC samples in a background thread"
+    default n
+    depends on EXAMPLES_AWD_PWM_DEMO_ADC_START
+    help
+      Some ADC lower-halves expect reads even with circular DMA. Enable this
+      to spawn a tiny thread that reads and discards samples.
+
+endif
+

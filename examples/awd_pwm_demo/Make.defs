@@ -1,0 +1,3 @@
+ifneq ($(CONFIG_EXAMPLES_AWD_PWM_DEMO),)
+CONFIGURED_APPS += $(APPDIR)/examples/awd_pwm_demo
+endif
