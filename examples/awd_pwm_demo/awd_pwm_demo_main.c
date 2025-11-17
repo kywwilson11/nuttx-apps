@@ -185,5 +185,18 @@ int main(int argc, char *argv[])
     {
       printf("re-arm failed\n");
     }
+    printf("Armed. Output should be HIGH now. Waiting for AWD...\n");
+
+    /* Wait for AWD trip; keep draining ADC so DMA doesn't flood IRQs */
+    while (!board_awd_pwm_latch_tripped())
+    {
+      /* Drain any pending samples and nap briefly */
+
+      drain_adc_nonblocking(adcfd);
+      struct pollfd p = {.fd = adcfd, .events = 0, .revents = 0};
+      (void)poll(&p, 1, 25); /* ~40Hz loop, low CPU */
+    }
+
+    printf("\nAWD TRIPPED: output latched LOW (CNT reset).\n");
   }
 }
